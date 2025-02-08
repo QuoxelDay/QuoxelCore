@@ -1,10 +1,18 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project>
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <AppDataRoamingVSDir>$([System.Environment]::GetFolderPath(SpecialFolder.ApplicationData))\VintagestoryData</AppDataRoamingVSDir>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <OutputPath>bin\$(Configuration)\Mods\mod</OutputPath>
+        <!-- This should get the latest version you have installed on Windows.
+        Additionally it doesn't overwrite if it doesn't exist for linux users.  -->
+        <VS_IN_REG>$(registry:HKEY_CURRENT_USER\SOFTWARE\Anego Studios\Vintage Story@InstallPath)</VS_IN_REG>
+        <VINTAGE_STORY Condition="'$(VS_IN_REG)' != ''">$(VS_IN_REG)</VINTAGE_STORY>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Krafs.Publicizer" Version="2.3.0"/>
+        <Publicize Include="VintagestoryLib"/>
+    </ItemGroup>
 
     <ItemGroup>
         <Reference Include="VintagestoryAPI">
@@ -39,6 +47,10 @@
             <HintPath>$(VINTAGE_STORY)/Lib/protobuf-net.dll</HintPath>
             <Private>False</Private>
         </Reference>
+        <Reference Include="System.Collections.Immutable">
+            <HintPath>$(VINTAGE_STORY)/Lib/System.Collections.Immutable.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
         <Reference Include="cairo-sharp">
             <HintPath>$(VINTAGE_STORY)/Lib/cairo-sharp.dll</HintPath>
             <Private>False</Private>
@@ -48,14 +60,12 @@
             <Private>False</Private>
         </Reference>
     </ItemGroup>
-
-    <ItemGroup>
-        <Content Include="assets\**">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-        <Content Include="modinfo.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-
+    <Target Name="ExportAfterBuild" AfterTargets="Build" Condition="Exists($(AppDataRoamingVSDir))">
+        <PropertyGroup>
+            <OutputLocation Condition="'$(OutputLocation)' == ''">Client</OutputLocation>
+        </PropertyGroup>
+        <Delete Files="$(OutputPath)\*.deps.json"/>
+        <MakeDir Directories="$(AppDataRoamingVSDir)\Development\$(OutputLocation)" Condition="!Exists('$(AppDataRoamingVSDir)\Development\$(OutputLocation)')"/>
+        <ZipDirectory Overwrite="true" DestinationFile="$(AppDataRoamingVSDir)\Development\$(OutputLocation)\$(AssemblyName).zip" SourceDirectory="$(OutputPath)"/>
+    </Target>
 </Project>

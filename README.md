@@ -1,4 +1,5 @@
-# 
+# QuoxelCore
+Contains QuoxelCoreServer & QuoxelCoreClient which provides utilities for all Quoxel servers.
 
 
 ### Support
