@@ -1,6 +1,6 @@
 using Vintagestory.Client;
 
-namespace QuoxelCoreClient;
+namespace QuoxelCore;
 
 public static class QuoxelClientCore
 {

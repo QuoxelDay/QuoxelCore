@@ -2,7 +2,7 @@
 using CSharpDiscordWebhook.NET.Discord;
 using QuoxelCore;
 
-namespace QuoxelCoreServer;
+namespace QuoxelCore;
 
 public static class QuoxelNotifier
 {
@@ -17,11 +17,11 @@ public static class QuoxelNotifier
     {
         get
         {
-            _config ??= GlobalAPI.CoreAPI.LoadModConfig<NotifierConfig>(ConfigFilename);
+            _config ??= GlobalAPI.CoreAPI?.LoadModConfig<NotifierConfig>(ConfigFilename);
             if (_config != null) return _config;
             
             _config = new NotifierConfig();
-            GlobalAPI.CoreAPI.StoreModConfig(_config, ConfigFilename);
+            GlobalAPI.CoreAPI?.StoreModConfig(_config, ConfigFilename);
 
             return _config;
         }
@@ -37,7 +37,7 @@ public static class QuoxelNotifier
         }
     }
 
-    private enum NotificationType { Info, Warning, Error, Critical }
+    private enum NotificationType { Simple, Info, Warning, Error, Critical }
 
     private static void Notify(NotificationType type, string content)
     {
@@ -47,6 +47,7 @@ public static class QuoxelNotifier
             NotificationType.Warning => ":warning:",
             NotificationType.Error => ":interrobang:",
             NotificationType.Critical =>  ":name_badge:",
+            NotificationType.Simple => "",
             _ => ""
         };
         var mentions = type switch
@@ -55,22 +56,29 @@ public static class QuoxelNotifier
             NotificationType.Warning => "<@&1336856485191356416>\t",
             NotificationType.Error => "<@&1336858530321404014>, <@&1336856485191356416>\t",
             NotificationType.Critical =>  "<@&1336858530321404014>, <@&1336856485191356416>\t",
+            NotificationType.Simple => "",
             _ => ""
         };
         
         var message = new DiscordMessage
         {
-            Content = mentions,
-            Embeds =
-            {
+            Content = mentions
+        };
+        if (type == NotificationType.Simple)
+        {
+            message.Content = content;
+        }
+        else
+        {
+            message.Embeds.Add(
                 new DiscordEmbed
                 {
                     Timestamp = new DiscordTimestamp(DateTime.Now),
                     Title = $"{emoji} {type}",
                     Description = content
-                }
-            }
-        };
+                });
+        }
+
         Webhook?.SendAsync(message);
     }
 
@@ -84,6 +92,8 @@ public static class QuoxelNotifier
         Notify(type, content);
     }
 
+    public static void NotifySimple(string message) =>
+        Notify(NotificationType.Simple, $"```autohotkey\n{message}\n```");
     public static void NotifyInfo(string? message = null, string? typeName = null, string? methodName = null) =>
         NotifyProcessor(NotificationType.Info, message, null, typeName, methodName);
     public static void NotifyWarning(string? errorMessage = null, Exception? exception = null, string? typeName = null, string? methodName = null) =>
