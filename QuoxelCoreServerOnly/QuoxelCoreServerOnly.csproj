@@ -12,7 +12,7 @@
     <Import Project="../common/CommonBuild.props"/>
 
     <ItemGroup>
-        <ProjectReference Include="../QuoxelCore/QuoxelCore.csproj" Private="false"/>
+        <ProjectReference Include="..\QuoxelCoreShared\QuoxelCoreShared.csproj" Private="false" />
         <PackageReference Include="CSharpDiscordWebhook.NET" Version="2.7.1"/>
 
         <Content Include="./modinfo.json">

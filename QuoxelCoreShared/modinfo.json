@@ -1,11 +1,11 @@
 {
     "type": "code",
-    "modid": "quoxelcore",
+    "modid": "quoxelcoreshared",
     "name": "QuoxelCore",
     "authors": [
         "wwwDayDream"
     ],
-    "description": "The core library for all things Quoxel.",
+    "description": "The shared core library for all things Quoxel.",
     "version": "1.0.0",
     "side": "Universal",
     "dependencies": {

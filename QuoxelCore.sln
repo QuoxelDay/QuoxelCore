@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoxelCore", "QuoxelCore\QuoxelCore.csproj", "{2780A859-D473-421C-92CA-A2DC32005850}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoxelCoreShared", "QuoxelCoreShared\QuoxelCoreShared.csproj", "{2780A859-D473-421C-92CA-A2DC32005850}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuoxelCoreServerOnly", "QuoxelCoreServerOnly\QuoxelCoreServerOnly.csproj", "{19CCECE0-675E-4474-96C1-B3500649759C}"
 EndProject
