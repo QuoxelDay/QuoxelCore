@@ -12,8 +12,9 @@
     <Import Project="../common/CommonBuild.props"/>
 
     <ItemGroup>
+        <Publicize Include="VintagestoryLib"/>
         <ProjectReference Include="..\QuoxelCoreShared\QuoxelCoreShared.csproj" Private="false" />
-        <PackageReference Include="CSharpDiscordWebhook.NET" Version="2.7.1"/>
+        <PackageReference Include="Discord.Net" Version="3.17.1" PrivateAssets="all"/>
 
         <Content Include="./modinfo.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
