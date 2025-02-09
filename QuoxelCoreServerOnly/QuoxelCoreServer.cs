@@ -12,6 +12,8 @@ public class QuoxelCoreServer : ModSystem
 
     public override void StartPre(ICoreAPI api)
     {
+        QuoxelNotifier.LoginDiscordClient().Wait();
+        
         QuoxelNotifier.NotifyInfo($"{GlobalAPI.ServerName} is online.");
         if (api is not ServerCoreAPI serverCoreAPI) return;
         serverCoreAPI.eventapi.PlayerChat += OnPlayerChat;

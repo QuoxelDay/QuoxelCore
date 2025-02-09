@@ -1,4 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Discord;
+using Discord.WebSocket;
 using QuoxelCore;
 
 namespace QuoxelCoreServer;
@@ -7,7 +12,10 @@ public static class QuoxelNotifier
 {
     public class NotifierConfig
     {
-        public string DiscordWebhookUri { get; set; } = "";
+        public bool HostsDiscordBot { get; set; } = false;
+        public string DiscordBotToken { get; set; } = "";
+        public ulong GuildId { get; set; } = 0;
+        public Dictionary<string, ulong> ChannelIds { get; set; } = new() { {"Status", 0}, {"Chat", 0} };
     }
 
     private static NotifierConfig? _config = null;
@@ -16,7 +24,15 @@ public static class QuoxelNotifier
     {
         get
         {
-            _config ??= GlobalAPI.CoreAPI?.LoadModConfig<NotifierConfig>(ConfigFilename);
+            try
+            {
+                _config ??= GlobalAPI.CoreAPI?.LoadModConfig<NotifierConfig>(ConfigFilename);
+            }
+            catch
+            {
+                // ignored
+            }
+
             if (_config != null) return _config;
             
             _config = new NotifierConfig();
@@ -25,13 +41,30 @@ public static class QuoxelNotifier
             return _config;
         }
     }
+    
+    public static DiscordSocketClient Client { get; private set; }
 
-    
-    
-    
-    
-    
-    
+    public static async Task LoginDiscordClient()
+    {
+        Client = new DiscordSocketClient();
+        Client.Log += msg =>
+        {
+            GlobalAPI.CoreAPI?.Logger.Debug(msg.ToString());
+            return Task.CompletedTask;
+        };
+
+        await Client.LoginAsync(TokenType.Bot, Config.DiscordBotToken);
+        await Client.StartAsync();
+        var notReady = true;
+        Client.Ready += () =>
+        {
+            notReady = false;
+            return Task.CompletedTask;
+        };
+        while (notReady) 
+            await Task.Delay(1);
+    }
+
     private enum NotificationType { Simple, Info, Warn, Error, Crash }
 
     private static void Notify(NotificationType type, string content)
@@ -54,6 +87,8 @@ public static class QuoxelNotifier
             NotificationType.Simple => "",
             _ => ""
         };
+        Client?.GetGuild(Config.GuildId)?.GetTextChannel(Config.ChannelIds["Status"])?
+            .SendMessageAsync($"{emoji} **{type}**\n`{content.Trim('\n')}` {mentions}");
         //
         // var message = new DiscordMessage
         // {
