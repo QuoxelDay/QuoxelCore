@@ -2,7 +2,7 @@
 using CSharpDiscordWebhook.NET.Discord;
 using QuoxelCore;
 
-namespace QuoxelCore;
+namespace QuoxelCoreServer;
 
 public static class QuoxelNotifier
 {

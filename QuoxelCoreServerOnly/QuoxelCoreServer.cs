@@ -1,12 +1,10 @@
-﻿using System;
-using HarmonyLib;
-using QuoxelCore;
+﻿using QuoxelCore;
 using Vintagestory.API.Common;
 using Vintagestory.API.Datastructures;
 using Vintagestory.API.Server;
 using Vintagestory.Server;
 
-namespace QuoxelCore;
+namespace QuoxelCoreServer;
 
 public class QuoxelCoreServer : ModSystem
 {
